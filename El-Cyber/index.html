@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El-Cyber | منصة الألعاب المفضلة</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- الهيدر (شريط التنقل) -->
+    <header>
+        <div class="logo">🎮 El-Cyber</div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active">الرئيسية</a></li>
+                <li><a href="#">ألعاب أكشن</a></li>
+                <li><a href="#">ألعاب ذكاء</a></li>
+                <li><a href="#">عن السايبر</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- القسم الرئيسي (البانر) -->
+    <section class="hero">
+        <h1>مرحباً بك في <span class="neon-text">السايبر</span></h1>
+        <p>اختار لعبتك المفضلة والعب فوراً بدون تحميل!</p>
+    </section>
+
+    <!-- قسم الألعاب -->
+    <main class="games-container">
+        <h2>ألعاب مقترحة ليك ⚡</h2>
+        <div class="games-grid">
+            
+            <!-- كارت اللعبة الأولى (XO) -->
+            <div class="game-card">
+                <div class="game-thumb" style="background: #222;">🎮</div>
+                <h3>لعبة تيك تاك تو (XO)</h3>
+                <button class="play-btn" id="play-xo-btn">العب الآن</button>
+            </div>
+
+            <!-- كارت اللعبة الثانية (الثعبان) -->
+            <div class="game-card">
+                <div class="game-thumb" style="background: #222;">🐍</div>
+                <h3>لعبة الثعبان الكلاسيكية</h3>
+                <button class="play-btn" id="play-snake-btn">العب الآن</button>
+            </div>
+
+            <!-- كارت اللعبة الثالثة -->
+            <div class="game-card">
+                <div class="game-thumb" style="background: #222;">🧱</div>
+                <h3>لعبة تكسير الكتل</h3>
+                <button class="play-btn">قريباً.. ⏳</button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- شاشة لعبة XO المنبثقة -->
+    <div id="game-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>لعبة تيك تاك تو (XO) 🎮</h2>
+            <div class="turn-indicator">دور اللاعب: <span id="current-player" class="neon-text">X</span></div>
+            
+            <div class="xo-board">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+            
+            <button id="reset-btn" class="play-btn">إعادة اللعب 🔄</button>
+        </div>
+    </div>
+
+    <!-- شاشة لعبة الثعبان المنبثقة (Snake Modal) -->
+    <div id="snake-modal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" id="close-snake-btn">&times;</span>
+            <h2>لعبة الثعبان الكلاسيكية 🐍</h2>
+            <div class="turn-indicator">السكور: <span id="snake-score" class="neon-text">0</span></div>
+            
+            <canvas id="snake-canvas" width="400" height="400"></canvas>
+            
+            <button id="start-snake-btn" class="play-btn">ابدأ اللعب 🎮</button>
+        </div>
+    </div>
+
+    <!-- نافذة التنبيه الاحترافية (Custom Alert) -->
+    <div id="custom-alert" class="alert-modal">
+        <div class="alert-content">
+            <div class="alert-icon">⚡</div>
+            <p id="alert-message">رسالة التنبيه هنا</p>
+            <button id="alert-close-btn" class="play-btn">تمام يا برنس 👍</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
