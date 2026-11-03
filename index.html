@@ -46,11 +46,11 @@
                 <button class="play-btn" id="play-snake-btn">العب الآن</button>
             </div>
 
-            <!-- كارت اللعبة الثالثة -->
+            <!-- كارت اللعبة الثالثة (تكسير الكتل) -->
             <div class="game-card">
                 <div class="game-thumb" style="background: #222;">🧱</div>
                 <h3>لعبة تكسير الكتل</h3>
-                <button class="play-btn">قريباً.. ⏳</button>
+                <button class="play-btn" id="play-bricks-btn">العب الآن</button>
             </div>
 
         </div>
@@ -89,6 +89,19 @@
             <canvas id="snake-canvas" width="400" height="400"></canvas>
             
             <button id="start-snake-btn" class="play-btn">ابدأ اللعب 🎮</button>
+        </div>
+    </div>
+
+    <!-- شاشة لعبة تكسير الكتل المنبثقة (Bricks Modal) -->
+    <div id="bricks-modal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" id="close-bricks-btn">&times;</span>
+            <h2>لعبة تكسير الكتل 🧱</h2>
+            <div class="turn-indicator">السكور: <span id="bricks-score" class="neon-text">0</span></div>
+            
+            <canvas id="bricks-canvas" width="400" height="400"></canvas>
+            
+            <button id="start-bricks-btn" class="play-btn">ابدأ اللعب 🎮</button>
         </div>
     </div>
 

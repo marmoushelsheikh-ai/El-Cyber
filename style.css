@@ -215,8 +215,8 @@ nav ul li a:hover, nav ul li a.active {
 .cell.x { color: #ff007f; text-shadow: 0 0 8px #ff007f; }
 .cell.o { color: #45f3ff; text-shadow: 0 0 8px #45f3ff; }
 
-/* لوحة الثعبان */
-#snake-canvas {
+/* لوحات ألعاب الكانفاس (الثعبان وتكسير الكتل) */
+#snake-canvas, #bricks-canvas {
     background: #0b0c10;
     border: 2px solid #ff007f;
     box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
