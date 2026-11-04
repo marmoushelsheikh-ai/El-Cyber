@@ -284,3 +284,44 @@ nav ul li a:hover, nav ul li a.active {
     background-color: #2bc4cf;
     box-shadow: 0 0 15px rgba(69, 243, 255, 0.6);
 }
+/* أزرار التحكم للموبايل */
+.mobile-controls {
+    display: none; /* مخفية على الكمبيوتر وبنظهرها للموبايل */
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin: 15px auto;
+    max-width: 200px;
+}
+
+.horizontal-ctrls {
+    display: flex;
+    gap: 40px;
+}
+
+.ctrl-btn {
+    width: 50px;
+    height: 50px;
+    background-color: #1f2833;
+    border: 2px solid #45f3ff;
+    color: #45f3ff;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(69, 243, 255, 0.2);
+    user-select: none; /* تمنع التحديد عند الضغط السريع */
+}
+
+.ctrl-btn:active {
+    background-color: #45f3ff;
+    color: #0b0c10;
+    box-shadow: 0 0 15px #45f3ff;
+}
+
+/* إظهار الأزرار فقط على الشاشات الصغيرة (الموبايل) */
+@media (max-width: 768px) {
+    .mobile-controls {
+        display: flex;
+    }
+}

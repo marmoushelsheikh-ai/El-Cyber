@@ -39,7 +39,7 @@
                 <button class="play-btn" id="play-xo-btn">العب الآن</button>
             </div>
 
-            <!-- كارت اللعبة الثانية (الثعبان) -->
+            <!-- كارت اللعبة الثانية (الثعبان) - تم إرجاعه وتصليحه 🐍 -->
             <div class="game-card">
                 <div class="game-thumb" style="background: #222;">🐍</div>
                 <h3>لعبة الثعبان الكلاسيكية</h3>
@@ -79,7 +79,7 @@
         </div>
     </div>
 
-    <!-- شاشة لعبة الثعبان المنبثقة (Snake Modal) -->
+    <!-- شاشة لعبة الثعبان المنبثقة بالتاتش للموبايل (Snake Modal) -->
     <div id="snake-modal" class="modal">
         <div class="modal-content" style="max-width: 450px;">
             <span class="close-btn" id="close-snake-btn">&times;</span>
@@ -87,6 +87,16 @@
             <div class="turn-indicator">السكور: <span id="snake-score" class="neon-text">0</span></div>
             
             <canvas id="snake-canvas" width="400" height="400"></canvas>
+            
+            <!-- أزرار التحكم بالتاتش للموبايل -->
+            <div class="mobile-controls">
+                <button id="btn-up" class="ctrl-btn">▲</button>
+                <div class="horizontal-ctrls">
+                    <button id="btn-left" class="ctrl-btn">◀</button>
+                    <button id="btn-right" class="ctrl-btn">▶</button>
+                </div>
+                <button id="btn-down" class="ctrl-btn">▼</button>
+            </div>
             
             <button id="start-snake-btn" class="play-btn">ابدأ اللعب 🎮</button>
         </div>

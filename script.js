@@ -23,7 +23,6 @@ function showAlert(message) {
 }
 alertCloseBtn.addEventListener('click', () => customAlert.classList.remove('show'));
 
-// فتح وإغلاق الألعاب بشكل مستقل
 if (playXoBtn) playXoBtn.addEventListener('click', () => { xoModal.style.display = 'flex'; resetGame(); });
 closeXoBtn.addEventListener('click', () => xoModal.style.display = 'none');
 
@@ -70,7 +69,7 @@ function checkResult() {
     else if (board[2] !== '' && board[2] === board[4] && board[4] === board[6]) roundWon = true;
 
     if (roundWon) {
-        setTimeout(() => { showAlert(`مبروووك! اللاعب ${currentPlayer} كسب في السايبر! 🎉`); isGameActive = false; }, 100);
+        setTimeout(() => { showAlert("مبروووك! اللاعب " + currentPlayer + " كسب في السايبر! 🎉"); isGameActive = false; }, 100);
         return;
     }
     if (!board.includes('')) {
@@ -89,7 +88,7 @@ function resetGame() {
     cells.forEach(cell => { cell.innerText = ''; cell.classList.remove('x', 'o'); });
 }
 
-/* ================= منطق لعبة الثعبان 🐍 ================= */
+/* ================= منطق لعبة الثعبان للموبايل والكمبيوتر 🐍 ================= */
 const canvas = document.getElementById('snake-canvas');
 const ctx = canvas.getContext('2d');
 const scoreElement = document.getElementById('snake-score');
@@ -130,7 +129,7 @@ function updateSnake() {
     const head = { x: snake[0].x + dx, y: snake[0].y + dy };
     if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height || snakeCollision(head)) {
         clearInterval(snakeGameInterval); snakeRunning = false; startSnakeBtn.innerText = "ابدأ اللعب 🎮";
-        showAlert(`جيم أوفر! السكور بتاعك: ${score} 💀`); return;
+        showAlert("جيم أوفر! السكور بتاعك: " + score + " 💀"); return;
     }
     snake.unshift(head);
     if (head.x === food.x && head.y === food.y) { score += 10; scoreElement.innerText = score; generateFood(); } else { snake.pop(); }
@@ -151,7 +150,14 @@ function drawSnakeGame() {
     ctx.shadowBlur = 0;
 }
 
-/* ================= منطق لعبة تكسير الكتل الكاملة 🧱 ================= */
+// أزرار تاتش الموبايل للثعبان
+document.getElementById('btn-up').addEventListener('click', () => { if (dy === 0) { dx = 0; dy = -grid; } });
+document.getElementById('btn-down').addEventListener('click', () => { if (dy === 0) { dx = 0; dy = grid; } });
+document.getElementById('btn-left').addEventListener('click', () => { if (dx === 0) { dx = -grid; dy = 0; } });
+document.getElementById('btn-right').addEventListener('click', () => { if (dx === 0) { dx = grid; dy = 0; } });
+
+
+/* ================= منطق لعبة تكسير الكتل تاتش وماوس 🧱 ================= */
 const bCanvas = document.getElementById('bricks-canvas');
 const bCtx = bCanvas.getContext('2d');
 const bScoreElement = document.getElementById('bricks-score');
@@ -192,7 +198,7 @@ function collisionDetection() {
             let b = bricks[c][r];
             if (b.status === 1) {
                 if (bX > b.x && bX < b.x + brickWidth && bY > b.y && bY < b.y + brickHeight) {
-                    bDy = -bDy; b.status = 0; bScore += 10; bScoreElement.innerText = bScore;
+                    bDx = -bDx; b.status = 0; bScore += 10; bScoreElement.innerText = bScore;
                     if (bScore === brickRowCount * brickColumnCount * 10) {
                         clearInterval(bricksInterval); bricksRunning = false; startBricksBtn.innerText = "ابدأ اللعب 🎮";
                         showAlert("عاش يا وحش! كسرت كل الكتل وكسبت الماتش! 🎉");
@@ -214,13 +220,13 @@ function drawPaddle() {
 }
 
 function drawBricks() {
-    for (let c = 0; c < brickColumnCount; c++) {
-        for (let r = 0; r < brickRowCount; r++) {
-            if (bricks[c][r].status === 1) {
-                let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
-                let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
-                bricks[c][r].x = brickX; bricks[c][r].y = brickY;
-                bCtx.beginPath(); bCtx.rect(brickX, brickY, brickWidth, brickHeight);
+for (let c = 0; c < brickColumnCount; c++) {
+for (let r = 0; r < brickRowCount; r++) {
+if (bricks[c][r].status === 1) {
+let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+bricks[c][r].x = brickX; bricks[c][r].y = brickY;
+bCtx.beginPath(); bCtx.rect(brickX, brickY, brickWidth, brickHeight);
 bCtx.fillStyle = "#ff007f"; bCtx.fill(); bCtx.closePath();
 }
 }
@@ -242,7 +248,16 @@ if (rightPressed && paddleX < bCanvas.width - paddleWidth) paddleX += 5;
 else if (leftPressed && paddleX > 0) paddleX -= 5;
 bX += bDx; bY += bDy;
 }
-// التحكم بالأسهم المشترك لجميع الألعاب
+// ميزة التاتش وحركة الصباع على الشاشة للكتل للموبايل 📱
+bCanvas.addEventListener("touchmove", (e) => {
+if (!bricksRunning) return;
+let relativeX = e.touches[0].clientX - bCanvas.getBoundingClientRect().left;
+if (relativeX > 0 && relativeX < bCanvas.width) {
+paddleX = relativeX - paddleWidth / 2;
+}
+e.preventDefault(); // تمنع الصفحة إنها تتهز وأنت بتلعب
+}, { passive: false });
+// تحكم الكيبورد العادي للكمبيوتر
 window.addEventListener('keydown', (e) => {
 if (snakeRunning) {
 if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -grid; }
