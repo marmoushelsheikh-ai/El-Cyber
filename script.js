@@ -26,7 +26,7 @@ const alertMessage = document.getElementById('alert-message');
 const subwayFrame = document.getElementById('subway-frame');
 const subwayContainer = document.getElementById('subway-container');
 const startSubwayFullscreen = document.getElementById('start-subway-fullscreen');
-const subwayGameUrl = "http://127.0.0.1:5500/subway.html";
+const subwayGameUrl = "https://marmoushelsheikh-ai.github.io/subway/";
 
 // دالة التنبيه الاحترافية المخصصة
 function showAlert(message) {
