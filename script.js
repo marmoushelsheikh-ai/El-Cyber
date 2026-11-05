@@ -1,4 +1,6 @@
-// عناصر التحكم في الشاشات والمنبثقات
+// ==========================================
+// 1. عناصر التحكم في الشاشات والمنبثقات
+// ==========================================
 const xoModal = document.getElementById('game-modal');
 const snakeModal = document.getElementById('snake-modal');
 const bricksModal = document.getElementById('bricks-modal');
@@ -17,12 +19,14 @@ const playBricksBtn = document.getElementById('play-bricks-btn');
 
 const alertMessage = document.getElementById('alert-message');
 
+// دالة التنبيه الاحترافية المخصصة
 function showAlert(message) {
     alertMessage.innerText = message;
     customAlert.classList.add('show');
 }
 alertCloseBtn.addEventListener('click', () => customAlert.classList.remove('show'));
 
+// ربط أزرار الفتح وإغلاق النوافذ
 if (playXoBtn) playXoBtn.addEventListener('click', () => { xoModal.style.display = 'flex'; resetGame(); });
 closeXoBtn.addEventListener('click', () => xoModal.style.display = 'none');
 
@@ -32,13 +36,17 @@ closeSnakeBtn.addEventListener('click', () => { snakeModal.style.display = 'none
 if (playBricksBtn) playBricksBtn.addEventListener('click', () => { bricksModal.style.display = 'flex'; initBricksGame(); });
 closeBricksBtn.addEventListener('click', () => { bricksModal.style.display = 'none'; clearInterval(bricksInterval); bricksRunning = false; });
 
+// إغلاق النوافذ عند الضغط خارجها
 window.addEventListener('click', (e) => {
     if (e.target === xoModal) xoModal.style.display = 'none';
     if (e.target === snakeModal) { snakeModal.style.display = 'none'; clearInterval(snakeGameInterval); snakeRunning = false; }
     if (e.target === bricksModal) { bricksModal.style.display = 'none'; clearInterval(bricksInterval); bricksRunning = false; }
 });
 
-/* ================= منطق لعبة XO ================= */
+
+// ==========================================
+// 2. منطق لعبة XO (تيك تاك تو)
+// ==========================================
 let board = ['', '', '', '', '', '', '', '', ''];
 let currentPlayer = 'X';
 let isGameActive = true;
@@ -50,227 +58,273 @@ cells.forEach(cell => {
     cell.addEventListener('click', () => {
         const index = parseInt(cell.getAttribute('data-index'));
         if (board[index] !== '' || !isGameActive) return;
+        
         board[index] = currentPlayer;
         cell.innerText = currentPlayer;
         cell.classList.add(currentPlayer.toLowerCase());
+        
         checkResult();
     });
 });
 
 function checkResult() {
     let roundWon = false;
-    if (board[0] !== '' && board[0] === board[1] && board[1] === board[2]) roundWon = true;
-    else if (board[3] !== '' && board[3] === board[4] && board[4] === board[5]) roundWon = true;
-    else if (board[6] !== '' && board[6] === board[7] && board[7] === board[8]) roundWon = true;
-    else if (board[0] !== '' && board[0] === board[3] && board[3] === board[6]) roundWon = true;
-    else if (board[1] !== '' && board[1] === board[4] && board[4] === board[7]) roundWon = true;
-    else if (board[2] !== '' && board[2] === board[5] && board[5] === board[8]) roundWon = true;
-    else if (board[0] !== '' && board[0] === board[4] && board[4] === board[8]) roundWon = true;
-    else if (board[2] !== '' && board[2] === board[4] && board[4] === board[6]) roundWon = true;
+    const winConditions = [, [3, 4, 5], [6, 7, 8], // أفقي, [1, 4, 7], [2, 5, 8], // رأسي, [2, 4, 6]             // قطري
+    ];
+
+    for (let condition of winConditions) {
+        if (board[condition[0]] !== '' && 
+            board[condition[0]] === board[condition[1]] && 
+            board[condition[0]] === board[condition[2]]) {
+            roundWon = true;
+            break;
+        }
+    }
 
     if (roundWon) {
-        setTimeout(() => { showAlert("مبروووك! اللاعب " + currentPlayer + " كسب في السايبر! 🎉"); isGameActive = false; }, 100);
+        showAlert(`مليون مبروك! اللاعب (${currentPlayer}) كسب الجيم 🏆`);
+        isGameActive = false;
         return;
     }
+
     if (!board.includes('')) {
-        setTimeout(() => { showAlert('الماتش خلص تعادل! شدوا حيلكم الجيم الجاي 🤝'); isGameActive = false; }, 100);
+        showAlert("التعادل سيد الموقف! 🤝 العبوا تاني.");
+        isGameActive = false;
         return;
     }
+
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
     playerTurnElement.innerText = currentPlayer;
+    playerTurnElement.className = currentPlayer === 'X' ? 'neon-text' : ''; 
 }
-resetBtn.addEventListener('click', resetGame);
+
 function resetGame() {
     board = ['', '', '', '', '', '', '', '', ''];
     currentPlayer = 'X';
     isGameActive = true;
-    if(playerTurnElement) playerTurnElement.innerText = currentPlayer;
-    cells.forEach(cell => { cell.innerText = ''; cell.classList.remove('x', 'o'); });
-}
-
-/* ================= منطق لعبة الثعبان للموبايل والكمبيوتر 🐍 ================= */
-const canvas = document.getElementById('snake-canvas');
-const ctx = canvas.getContext('2d');
-const scoreElement = document.getElementById('snake-score');
-const startSnakeBtn = document.getElementById('start-snake-btn');
-
-let grid = 20;
-let snake = [];
-let food = { x: 0, y: 0 };
-let dx = grid, dy = 0, score = 0, snakeGameInterval, snakeRunning = false;
-
-if (startSnakeBtn) {
-    startSnakeBtn.addEventListener('click', () => {
-        if (!snakeRunning) {
-            initSnakeGame();
-            snakeGameInterval = setInterval(updateSnake, 100);
-            snakeRunning = true;
-            startSnakeBtn.innerText = "إعادة البدء 🔄";
-        } else {
-            clearInterval(snakeGameInterval);
-            initSnakeGame();
-            snakeGameInterval = setInterval(updateSnake, 100);
-        }
+    playerTurnElement.innerText = currentPlayer;
+    cells.forEach(cell => {
+        cell.innerText = '';
+        cell.classList.remove('x', 'o');
     });
 }
+if (resetBtn) resetBtn.addEventListener('click', resetGame);
+
+
+// ==========================================
+// 3. منطق لعبة الثعبان الكلاسيكية (Snake)
+// ==========================================
+const snakeCanvas = document.getElementById('snake-canvas');
+const snakeCtx = snakeCanvas.getContext('2d');
+let snake, snakeDir, food, snakeScore, snakeGameInterval;
+let snakeRunning = false;
+const snakeGridSize = 20;
+
+const startSnakeBtn = document.getElementById('start-snake-btn');
+if (startSnakeBtn) startSnakeBtn.addEventListener('click', initSnakeGame);
 
 function initSnakeGame() {
-    snake = [{ x: 160, y: 160 }, { x: 140, y: 160 }, { x: 120, y: 160 }];
-    dx = grid; dy = 0; score = 0; scoreElement.innerText = score; generateFood(); drawSnakeGame();
+    clearInterval(snakeGameInterval);
+    snake = [{x: 200, y: 200}, {x: 180, y: 200}, {x: 160, y: 200}];
+    snakeDir = 'RIGHT';
+    snakeScore = 0;
+    document.getElementById('snake-score').innerText = snakeScore;
+    generateSnakeFood();
+    snakeRunning = true;
+    snakeGameInterval = setInterval(updateSnakeGame, 130);
 }
 
-function generateFood() {
-    food.x = Math.floor(Math.random() * (canvas.width / grid)) * grid;
-    food.y = Math.floor(Math.random() * (canvas.height / grid)) * grid;
+function generateSnakeFood() {
+    food = {
+        x: Math.floor(Math.random() * (snakeCanvas.width / snakeGridSize)) * snakeGridSize,
+        y: Math.floor(Math.random() * (snakeCanvas.height / snakeGridSize)) * snakeGridSize
+    };
 }
 
-function updateSnake() {
-    if (snake.length === 0) return;
-    const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-    if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height || snakeCollision(head)) {
-        clearInterval(snakeGameInterval); snakeRunning = false; startSnakeBtn.innerText = "ابدأ اللعب 🎮";
-        showAlert("جيم أوفر! السكور بتاعك: " + score + " 💀"); return;
+function updateSnakeGame() {
+    if (!snakeRunning) return;
+
+    let head = { x: snake[0].x, y: snake[0].y };
+    if (snakeDir === 'UP') head.y -= snakeGridSize;
+    if (snakeDir === 'DOWN') head.y += snakeGridSize;
+    if (snakeDir === 'LEFT') head.x -= snakeGridSize;
+    if (snakeDir === 'RIGHT') head.x += snakeGridSize;
+
+    // كشف الاصطدام بالحواف أو بجسم الثعبان
+    if (head.x < 0 || head.x >= snakeCanvas.width || head.y < 0 || head.y >= snakeCanvas.height ||
+        snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+        clearInterval(snakeGameInterval);
+        snakeRunning = false;
+        showAlert(`جيم أوفر يا بطل! 🐍 السكور بتاعك: ${snakeScore}`);
+        return;
     }
+
     snake.unshift(head);
-    if (head.x === food.x && head.y === food.y) { score += 10; scoreElement.innerText = score; generateFood(); } else { snake.pop(); }
-    drawSnakeGame();
+
+    // أكل الطعام
+    if (head.x === food.x && head.y === food.y) {
+        snakeScore += 10;
+        document.getElementById('snake-score').innerText = snakeScore;
+        generateSnakeFood();
+    } else {
+        snake.pop();
+    }
+
+    // رسم اللعبة على الكانفاس
+    snakeCtx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+    
+    // رسم الثعبان باللون الفوسفوري الأزرق
+    snakeCtx.fillStyle = '#45f3ff';
+    snake.forEach(segment => snakeCtx.fillRect(segment.x, segment.y, snakeGridSize - 2, snakeGridSize - 2));
+    
+    // رسم الأكل باللون الوردي النيوني
+    snakeCtx.fillStyle = '#ff007f';
+    snakeCtx.fillRect(food.x, food.y, snakeGridSize - 2, snakeGridSize - 2);
 }
 
-function snakeCollision(head) {
-    for (let i = 0; i < snake.length; i++) { if (snake[i].x === head.x && snake[i].y === head.y) return true; }
-    return false;
+// دالة مساعدة لتغيير الاتجاه تدعم الموبايل والكمبيوتر معاً
+function changeDirection(newDir) {
+    if (newDir === 'UP' && snakeDir !== 'DOWN') snakeDir = 'UP';
+    if (newDir === 'DOWN' && snakeDir !== 'UP') snakeDir = 'DOWN';
+    if (newDir === 'LEFT' && snakeDir !== 'RIGHT') snakeDir = 'LEFT';
+    if (newDir === 'RIGHT' && snakeDir !== 'LEFT') snakeDir = 'RIGHT';
 }
 
-function drawSnakeGame() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#45f3ff'; ctx.shadowBlur = 10; ctx.shadowColor = '#45f3ff';
-    ctx.fillRect(food.x, food.y, grid - 2, grid - 2);
-    ctx.fillStyle = '#ff007f'; ctx.shadowColor = '#ff007f';
-    snake.forEach(part => ctx.fillRect(part.x, part.y, grid - 2, grid - 2));
-    ctx.shadowBlur = 0;
-}
+// التحكم بالأسهم للكمبيوتر
+window.addEventListener('keydown', e => {
+    if (!snakeRunning) return;
+    if (e.key === 'ArrowUp') changeDirection('UP');
+    if (e.key === 'ArrowDown') changeDirection('UP'); // تصحيح لتوجيه السهم لأسفل
+    if (e.key === 'ArrowDown') changeDirection('DOWN');
+    if (e.key === 'ArrowLeft') changeDirection('LEFT');
+    if (e.key === 'ArrowRight') changeDirection('RIGHT');
+});
 
-// أزرار تاتش الموبايل للثعبان
-document.getElementById('btn-up').addEventListener('click', () => { if (dy === 0) { dx = 0; dy = -grid; } });
-document.getElementById('btn-down').addEventListener('click', () => { if (dy === 0) { dx = 0; dy = grid; } });
-document.getElementById('btn-left').addEventListener('click', () => { if (dx === 0) { dx = -grid; dy = 0; } });
-document.getElementById('btn-right').addEventListener('click', () => { if (dx === 0) { dx = grid; dy = 0; } });
+// تشغيل الأزرار باللمس السريع (Touch) لسرعة استجابة خرافية على الموبايل
+document.getElementById('btn-up').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection('UP'); });
+document.getElementById('btn-down').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection('DOWN'); });
+document.getElementById('btn-left').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection('LEFT'); });
+document.getElementById('btn-right').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection('RIGHT'); });
+
+// كود احتياطي في حال تم الضغط بالماوس (Responsive Mode)
+document.getElementById('btn-up').addEventListener('click', () => changeDirection('UP'));
+document.getElementById('btn-down').addEventListener('click', () => changeDirection('DOWN'));
+document.getElementById('btn-left').addEventListener('click', () => changeDirection('LEFT'));
+document.getElementById('btn-right').addEventListener('click', () => changeDirection('RIGHT'));
 
 
-/* ================= منطق لعبة تكسير الكتل تاتش وماوس 🧱 ================= */
-const bCanvas = document.getElementById('bricks-canvas');
-const bCtx = bCanvas.getContext('2d');
-const bScoreElement = document.getElementById('bricks-score');
+// ==========================================
+// 4. منطق لعبة تكسير الكتل (Bricks)
+// ==========================================
+const bricksCanvas = document.getElementById('bricks-canvas');
+const bricksCtx = bricksCanvas.getContext('2d');
+let paddleWidth = 80, paddleHeight = 12, paddleX;
+let ballRadius = 8, ballX, ballY, dx, dy;
+let brickRowCount = 3, brickColumnCount = 5, brickWidth = 65, brickHeight = 18, brickPadding = 10, brickOffsetTop = 30, brickOffsetLeft = 20;
+let bricks = [], bricksScore = 0, bricksInterval;
+let bricksRunning = false;
+let moveLeft = false, moveRight = false;
+
 const startBricksBtn = document.getElementById('start-bricks-btn');
-
-let ballRadius = 8, bX, bY, bDx, bDy;
-let paddleHeight = 10, paddleWidth = 75, paddleX;
-let rightPressed = false, leftPressed = false;
-let brickRowCount = 4, brickColumnCount = 5, brickWidth = 65, brickHeight = 15, brickPadding = 10, brickOffsetTop = 30, brickOffsetLeft = 20;
-let bricks = [], bScore = 0, bricksInterval, bricksRunning = false;
-
-if (startBricksBtn) {
-    startBricksBtn.addEventListener('click', () => {
-        initBricksGame();
-        if (!bricksRunning) {
-            bricksInterval = setInterval(drawBricksGame, 10);
-            bricksRunning = true;
-            startBricksBtn.innerText = "إعادة البدء 🔄";
-        } else {
-            clearInterval(bricksInterval);
-            bricksInterval = setInterval(drawBricksGame, 10);
-        }
-    });
-}
+if (startBricksBtn) startBricksBtn.addEventListener('click', initBricksGame);
 
 function initBricksGame() {
-    bX = bCanvas.width / 2; bY = bCanvas.height - 30; bDx = 2; bDy = -2;
-    paddleX = (bCanvas.width - paddleWidth) / 2; bScore = 0; bScoreElement.innerText = bScore;
+    clearInterval(bricksInterval);
+    bricksScore = 0;
+    document.getElementById('bricks-score').innerText = bricksScore;
+    paddleX = (bricksCanvas.width - paddleWidth) / 2;
+    ballX = bricksCanvas.width / 2;
+    ballY = bricksCanvas.height - 30;
+    dx = 3;
+    dy = -3;
+
+    // بناء شبكة الكتل
     for (let c = 0; c < brickColumnCount; c++) {
         bricks[c] = [];
-        for (let r = 0; r < brickRowCount; r++) { bricks[c][r] = { x: 0, y: 0, status: 1 }; }
-    }
-}
-
-function collisionDetection() {
-    for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
-            let b = bricks[c][r];
-            if (b.status === 1) {
-                if (bX > b.x && bX < b.x + brickWidth && bY > b.y && bY < b.y + brickHeight) {
-                    bDx = -bDx; b.status = 0; bScore += 10; bScoreElement.innerText = bScore;
-                    if (bScore === brickRowCount * brickColumnCount * 10) {
-                        clearInterval(bricksInterval); bricksRunning = false; startBricksBtn.innerText = "ابدأ اللعب 🎮";
-                        showAlert("عاش يا وحش! كسرت كل الكتل وكسبت الماتش! 🎉");
-                    }
-                }
-            }
-        }
-    }
+bricks[c][r] = { x: 0, y: 0, status: 1 };
 }
-
-function drawBall() {
-    bCtx.beginPath(); bCtx.arc(bX, bY, ballRadius, 0, Math.PI * 2);
-    bCtx.fillStyle = "#45f3ff"; bCtx.shadowBlur = 10; bCtx.shadowColor = "#45f3ff"; bCtx.fill(); bCtx.closePath();
 }
-
-function drawPaddle() {
-    bCtx.beginPath(); bCtx.rect(paddleX, bCanvas.height - paddleHeight, paddleWidth, paddleHeight);
-    bCtx.fillStyle = "#ff007f"; bCtx.shadowColor = "#ff007f"; bCtx.fill(); bCtx.closePath();
+bricksRunning = true;
+bricksInterval = setInterval(updateBricksGame, 16);
 }
-
-function drawBricks() {
+function updateBricksGame() {
+if (!bricksRunning) return;
+// حركة الكرة والارتداد من الحوائط
+if (ballX + dx > bricksCanvas.width - ballRadius || ballX + dx < ballRadius) dx = -dx;
+if (ballY + dy < ballRadius) dy = -dy;
+else if (ballY + dy > bricksCanvas.height - ballRadius) {
+// الارتداد من المضرب
+if (ballX > paddleX && ballX < paddleX + paddleWidth) {
+dy = -dy;
+} else {
+clearInterval(bricksInterval);
+bricksRunning = false;
+showAlert(`للأسف خسرت الكرة! 🧱 السكور: ${bricksScore}`);
+return;
+}
+}
+// كشف اصطدام الكرة بالكتل
+for (let c = 0; c < brickColumnCount; c++) {
+for (let r = 0; r < brickRowCount; r++) {
+let b = bricks[c][r];
+if (b.status === 1) {
+if (ballX > b.x && ballX < b.x + brickWidth && ballY > b.y && ballY < b.y + brickHeight) {
+dy = -dy;
+b.status = 0;
+bricksScore++;
+document.getElementById('bricks-score').innerText = bricksScore;
+if (bricksScore === brickRowCount * brickColumnCount) {
+clearInterval(bricksInterval);
+bricksRunning = false;
+showAlert("عاش يا وحش! كسرت كل الكتل بنجاح 🏆");
+}
+}
+}
+}
+}
+// حركة المضرب يميناً ويساراً
+if (moveRight && paddleX < bricksCanvas.width - paddleWidth) paddleX += 6;
+if (moveLeft && paddleX > 0) paddleX -= 6;
+ballX += dx;
+ballY += dy;
+// مسح الكانفاس للرسم الجديد
+bricksCtx.clearRect(0, 0, bricksCanvas.width, bricksCanvas.height);
+// رسم الكتل المتبقية
 for (let c = 0; c < brickColumnCount; c++) {
 for (let r = 0; r < brickRowCount; r++) {
 if (bricks[c][r].status === 1) {
 let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
 let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
-bricks[c][r].x = brickX; bricks[c][r].y = brickY;
-bCtx.beginPath(); bCtx.rect(brickX, brickY, brickWidth, brickHeight);
-bCtx.fillStyle = "#ff007f"; bCtx.fill(); bCtx.closePath();
+bricks[c][r].x = brickX;
+bricks[c][r].y = brickY;
+bricksCtx.fillStyle = "#ff007f";
+bricksCtx.fillRect(brickX, brickY, brickWidth, brickHeight);
 }
 }
 }
+// رسم المضرب والكرة
+bricksCtx.fillStyle = "#45f3ff";
+bricksCtx.fillRect(paddleX, bricksCanvas.height - paddleHeight, paddleWidth, paddleHeight);
+bricksCtx.beginPath();
+bricksCtx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+bricksCtx.fill();
+bricksCtx.closePath();
 }
-function drawBricksGame() {
-bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
-drawBricks(); drawBall(); drawPaddle(); collisionDetection(); bCtx.shadowBlur = 0;
-if (bX + bDx > bCanvas.width - ballRadius || bX + bDx < ballRadius) bDx = -bDx;
-if (bY + bDy < ballRadius) bDy = -bDy;
-else if (bY + bDy > bCanvas.height - ballRadius) {
-if (bX > paddleX && bX < paddleX + paddleWidth) bDy = -bDy;
-else {
-clearInterval(bricksInterval); bricksRunning = false; startBricksBtn.innerText = "ابدأ اللعب 🎮";
-showAlert("جيم أوفر! الكتل كسبتك والسكور: " + bScore + " 💀"); return;
-}
-}
-if (rightPressed && paddleX < bCanvas.width - paddleWidth) paddleX += 5;
-else if (leftPressed && paddleX > 0) paddleX -= 5;
-bX += bDx; bY += bDy;
-}
-// ميزة التاتش وحركة الصباع على الشاشة للكتل للموبايل 📱
-bCanvas.addEventListener("touchmove", (e) => {
-if (!bricksRunning) return;
-let relativeX = e.touches[0].clientX - bCanvas.getBoundingClientRect().left;
-if (relativeX > 0 && relativeX < bCanvas.width) {
+// التحكم بلوحة المفاتيح للمضرب
+window.addEventListener('keydown', e => {
+if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveRight = true;
+if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveLeft = true;
+});
+window.addEventListener('keyup', e => {
+if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveRight = false;
+if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveLeft = false;
+});
+// ميزة لمس الشاشة وسحب المضرب للموبايل
+bricksCanvas.addEventListener('touchmove', e => {
+let rect = bricksCanvas.getBoundingClientRect();
+let relativeX = e.touches.clientX - rect.left;
+if (relativeX > 0 && relativeX < bricksCanvas.width) {
 paddleX = relativeX - paddleWidth / 2;
 }
-e.preventDefault(); // تمنع الصفحة إنها تتهز وأنت بتلعب
-}, { passive: false });
-// تحكم الكيبورد العادي للكمبيوتر
-window.addEventListener('keydown', (e) => {
-if (snakeRunning) {
-if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -grid; }
-if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = grid; }
-if (e.key === 'ArrowLeft' && dx === 0) { dx = -grid; dy = 0; }
-if (e.key === 'ArrowRight' && dx === 0) { dx = grid; dy = 0; }
-}
-if (bricksRunning) {
-if (e.key === "Right" || e.key === "ArrowRight") rightPressed = true;
-if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = true;
-}
-});
-window.addEventListener('keyup', (e) => {
-if (e.key === "Right" || e.key === "ArrowRight") rightPressed = false;
-if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = false;
 });
