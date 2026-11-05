@@ -166,7 +166,7 @@ nav ul li a:hover, nav ul li a.active {
     width: 95%;
     max-width: 450px;
     max-height: 90vh; /* يمنع خروج المحتوى برة الشاشة */
-    overflow-y: auto;  /* يسمح بالاسكرول الداخلي لو الشاشة صغيرة جداً */
+    overflow-y: auto;  /* يسمح بالاسكرول الداخلي لو الشاشة صغيرة */
     position: relative;
 }
 
@@ -218,7 +218,7 @@ nav ul li a:hover, nav ul li a.active {
 .cell.x { color: #ff007f; text-shadow: 0 0 8px #ff007f; }
 .cell.o { color: #45f3ff; text-shadow: 0 0 8px #45f3ff; }
 
-/* لوحات ألعاب الكانفاس (جعلها متجاوبة ريسبرونسيف للموبايل) */
+/* لوحات ألعاب الكانفاس لتكون متجاوبة مع الشاشة */
 #snake-canvas, #bricks-canvas {
     background: #0b0c10;
     border: 2px solid #ff007f;
@@ -226,7 +226,7 @@ nav ul li a:hover, nav ul li a.active {
     margin: 15px auto;
     display: block;
     max-width: 100%;
-    height: auto; /* يجعل الكانفاس يصغر ويحافظ على أبعاده */
+    height: auto;
 }
 
 /* نافذة التنبيه الاحترافية */
@@ -289,31 +289,31 @@ nav ul li a:hover, nav ul li a.active {
     box-shadow: 0 0 15px rgba(69, 243, 255, 0.6);
 }
 
-/* أزرار التحكم للموبايل */
+/* أزرار التحكم للموبايل ومنع مشاكل اتجاه لغة المتصفح */
 .mobile-controls {
-    display: none; /* مخفية على الكمبيوتر وبنظهرها للموبايل */
+    display: none;
     flex-direction: column;
     align-items: center;
     gap: 8px;
     margin: 15px auto;
     width: 100%;
     max-width: 220px;
-    direction: ltr !important; /* إجبار اللوحة على الاتجاه الطبيعي لمنع قلب الأسهم */
+    direction: ltr !important; /* يحافظ على الاتجاه الهندسي الصحيح للأسهم */
 }
 
 .horizontal-ctrls {
     display: flex;
-    gap: 50px;
-    direction: ltr !important; /* ضبط المحاذاة الأفقية للأسهم يمين وشمال */
+    gap: 45px;
+    direction: ltr !important;
 }
 
 .ctrl-btn {
-    width: 55px;
-    height: 55px;
+    width: 50px;
+    height: 50px;
     background-color: #1f2833;
     border: 2px solid #45f3ff;
     color: #45f3ff;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: bold;
     border-radius: 50%;
     cursor: pointer;
@@ -331,8 +331,7 @@ nav ul li a:hover, nav ul li a.active {
     box-shadow: 0 0 15px #45f3ff;
 }
 
-
-/* إظهار الأزرار فقط على الشاشات الصغيرة (الموبايل) */
+/* إظهار الأزرار فقط على الشاشات الصغيرة للموبايل */
 @media (max-width: 768px) {
     .mobile-controls {
         display: flex !important;

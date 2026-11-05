@@ -4,20 +4,29 @@
 const xoModal = document.getElementById('game-modal');
 const snakeModal = document.getElementById('snake-modal');
 const bricksModal = document.getElementById('bricks-modal');
+const subwayModal = document.getElementById('subway-modal');
 const customAlert = document.getElementById('custom-alert');
 
 // أزرار الإغلاق
 const closeXoBtn = document.querySelector('#game-modal .close-btn');
 const closeSnakeBtn = document.getElementById('close-snake-btn');
 const closeBricksBtn = document.getElementById('close-bricks-btn');
+const closeSubwayBtn = document.getElementById('close-subway-btn');
 const alertCloseBtn = document.getElementById('alert-close-btn');
 
 // أزرار فتح الألعاب
 const playXoBtn = document.getElementById('play-xo-btn');
 const playSnakeBtn = document.getElementById('play-snake-btn');
 const playBricksBtn = document.getElementById('play-bricks-btn');
+const playSubwayBtn = document.getElementById('play-subway-btn');
 
 const alertMessage = document.getElementById('alert-message');
+
+// عناصر لعبة ساب واي وسيرفر تشغيل HTML5 النظيف المعتمد
+const subwayFrame = document.getElementById('subway-frame');
+const subwayContainer = document.getElementById('subway-container');
+const startSubwayFullscreen = document.getElementById('start-subway-fullscreen');
+const subwayGameUrl = "http://127.0.0.1:5500/subway.html";
 
 // دالة التنبيه الاحترافية المخصصة
 function showAlert(message) {
@@ -36,12 +45,30 @@ closeSnakeBtn.addEventListener('click', () => { snakeModal.style.display = 'none
 if (playBricksBtn) playBricksBtn.addEventListener('click', () => { bricksModal.style.display = 'flex'; initBricksGame(); });
 closeBricksBtn.addEventListener('click', () => { bricksModal.style.display = 'none'; clearInterval(bricksInterval); bricksRunning = false; });
 
+// تشغيل وإيقاف ساب واي لمنع استهلاك البيانات عند الإغلاق
+if (playSubwayBtn) playSubwayBtn.addEventListener('click', () => { subwayModal.style.display = 'flex'; subwayFrame.src = subwayGameUrl; });
+closeSubwayBtn.addEventListener('click', () => { subwayModal.style.display = 'none'; subwayFrame.src = ""; });
+
 // إغلاق النوافذ عند الضغط خارجها
 window.addEventListener('click', (e) => {
     if (e.target === xoModal) xoModal.style.display = 'none';
     if (e.target === snakeModal) { snakeModal.style.display = 'none'; clearInterval(snakeGameInterval); snakeRunning = false; }
     if (e.target === bricksModal) { bricksModal.style.display = 'none'; clearInterval(bricksInterval); bricksRunning = false; }
+    if (e.target === subwayModal) { subwayModal.style.display = 'none'; subwayFrame.src = ""; }
 });
+
+// تفعيل ميزة طلب الـ Fullscreen بكامل الشاشة لساب واي
+if (startSubwayFullscreen) {
+    startSubwayFullscreen.addEventListener('click', () => {
+        if (subwayContainer.requestFullscreen) {
+            subwayContainer.requestFullscreen();
+        } else if (subwayContainer.webkitRequestFullscreen) { /* أجهزة آيفون وسفاري */
+            subwayContainer.webkitRequestFullscreen();
+        } else if (subwayContainer.msRequestFullscreen) {
+            subwayContainer.msRequestFullscreen();
+        }
+    });
+}
 
 
 // ==========================================
@@ -57,8 +84,6 @@ const resetBtn = document.getElementById('reset-btn');
 cells.forEach(cell => {
     cell.addEventListener('click', () => {
         const index = parseInt(cell.getAttribute('data-index'));
-        
-        // حماية المربعات لمنع الكتابة المكررة
         if (board[index] !== '' || !isGameActive) return;
         
         board[index] = currentPlayer;
@@ -74,14 +99,14 @@ function checkResult() {
     
     // شروط الفوز محمية ومكتوبة بنصوص صريحة لمنع الاختفاء أثناء النقل والنسخ
     const winConditions = [
-        [parseInt('0'), parseInt('1'), parseInt('2')], // صف 1
-        [parseInt('3'), parseInt('4'), parseInt('5')], // صف 2
-        [parseInt('6'), parseInt('7'), parseInt('8')], // صف 3
-        [parseInt('0'), parseInt('3'), parseInt('6')], // عمود 1
-        [parseInt('1'), parseInt('4'), parseInt('7')], // عمود 2
-        [parseInt('2'), parseInt('5'), parseInt('8')], // عمود 3
-        [parseInt('0'), parseInt('4'), parseInt('8')], // قطر 1
-        [parseInt('2'), parseInt('4'), parseInt('6')]  // قطر 2
+        [parseInt('0'), parseInt('1'), parseInt('2')], 
+        [parseInt('3'), parseInt('4'), parseInt('5')], 
+        [parseInt('6'), parseInt('7'), parseInt('8')], 
+        [parseInt('0'), parseInt('3'), parseInt('6')], 
+        [parseInt('1'), parseInt('4'), parseInt('7')], 
+        [parseInt('2'), parseInt('5'), parseInt('8')], 
+        [parseInt('0'), parseInt('4'), parseInt('8')], 
+        [parseInt('2'), parseInt('4'), parseInt('6')]
     ];
 
     for (let i = 0; i < winConditions.length; i++) {
@@ -108,7 +133,6 @@ function checkResult() {
         return;
     }
 
-    // تبديل الأدوار وتغيير الألوان نيون للمؤشر بالكامل
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
     playerTurnElement.innerText = currentPlayer;
     
@@ -217,18 +241,15 @@ window.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight') changeDirection('RIGHT');
 });
 
-// اللمس السريع للموبايل
+// اللمس السريع عالي الاستجابة للموبايل
 document.getElementById('btn-up').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection('UP'); });
 document.getElementById('btn-down').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection('DOWN'); });
 document.getElementById('btn-left').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection('LEFT'); });
 document.getElementById('btn-right').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection('RIGHT'); });
-
 document.getElementById('btn-up').addEventListener('click', () => changeDirection('UP'));
 document.getElementById('btn-down').addEventListener('click', () => changeDirection('DOWN'));
 document.getElementById('btn-left').addEventListener('click', () => changeDirection('LEFT'));
 document.getElementById('btn-right').addEventListener('click', () => changeDirection('RIGHT'));
-
-
 // ==========================================
 // 4. منطق لعبة تكسير الكتل (Bricks)
 // ==========================================
@@ -240,10 +261,8 @@ let brickRowCount = 3, brickColumnCount = 5, brickWidth = 65, brickHeight = 18, 
 let bricks = [], bricksScore = 0, bricksInterval;
 let bricksRunning = false;
 let moveLeft = false, moveRight = false;
-
 const startBricksBtn = document.getElementById('start-bricks-btn');
 if (startBricksBtn) startBricksBtn.addEventListener('click', initBricksGame);
-
 function initBricksGame() {
 clearInterval(bricksInterval);
 bricksScore = 0;
@@ -326,11 +345,20 @@ window.addEventListener('keyup', e => {
 if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveRight = false;
 if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveLeft = false;
 });
-// سحب المضرب للموبايل
+// سحب ومس المضرب للموبايل بسلاسة وبدون تهنيج للشاشة
 bricksCanvas.addEventListener('touchmove', e => {
+e.preventDefault();
 let rect = bricksCanvas.getBoundingClientRect();
-let relativeX = e.touches.clientX - rect.left;
+let relativeX = e.touches[0].clientX - rect.left;
 if (relativeX > 0 && relativeX < bricksCanvas.width) {
 paddleX = relativeX - paddleWidth / 2;
 }
-});
+}, { passive: false });
+bricksCanvas.addEventListener('touchstart', e => {
+e.preventDefault();
+let rect = bricksCanvas.getBoundingClientRect();
+let relativeX = e.touches[0].clientX - rect.left;
+if (relativeX > 0 && relativeX < bricksCanvas.width) {
+paddleX = relativeX - paddleWidth / 2;
+}
+}, { passive: false });
