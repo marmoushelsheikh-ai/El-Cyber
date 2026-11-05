@@ -298,20 +298,22 @@ nav ul li a:hover, nav ul li a.active {
     margin: 15px auto;
     width: 100%;
     max-width: 220px;
+    direction: ltr !important; /* إجبار اللوحة على الاتجاه الطبيعي لمنع قلب الأسهم */
 }
 
 .horizontal-ctrls {
     display: flex;
-    gap: 45px;
+    gap: 50px;
+    direction: ltr !important; /* ضبط المحاذاة الأفقية للأسهم يمين وشمال */
 }
 
 .ctrl-btn {
-    width: 50px;
-    height: 50px;
+    width: 55px;
+    height: 55px;
     background-color: #1f2833;
     border: 2px solid #45f3ff;
     color: #45f3ff;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
     border-radius: 50%;
     cursor: pointer;
@@ -328,6 +330,7 @@ nav ul li a:hover, nav ul li a.active {
     color: #0b0c10;
     box-shadow: 0 0 15px #45f3ff;
 }
+
 
 /* إظهار الأزرار فقط على الشاشات الصغيرة (الموبايل) */
 @media (max-width: 768px) {
