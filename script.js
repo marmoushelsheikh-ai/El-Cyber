@@ -150,7 +150,6 @@ function updateSnakeGame() {
     if (snakeDir === 'LEFT') head.x -= snakeGridSize;
     if (snakeDir === 'RIGHT') head.x += snakeGridSize;
 
-    // كشف الاصطدام بالحواف أو بجسم الثعبان
     if (head.x < 0 || head.x >= snakeCanvas.width || head.y < 0 || head.y >= snakeCanvas.height ||
         snake.some(segment => segment.x === head.x && segment.y === head.y)) {
         clearInterval(snakeGameInterval);
@@ -161,7 +160,6 @@ function updateSnakeGame() {
 
     snake.unshift(head);
 
-    // أكل الطعام
     if (head.x === food.x && head.y === food.y) {
         snakeScore += 10;
         document.getElementById('snake-score').innerText = snakeScore;
@@ -170,19 +168,15 @@ function updateSnakeGame() {
         snake.pop();
     }
 
-    // رسم اللعبة على الكانفاس
     snakeCtx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
     
-    // رسم الثعبان باللون الفوسفوري الأزرق
     snakeCtx.fillStyle = '#45f3ff';
     snake.forEach(segment => snakeCtx.fillRect(segment.x, segment.y, snakeGridSize - 2, snakeGridSize - 2));
     
-    // رسم الأكل باللون الوردي النيوني
     snakeCtx.fillStyle = '#ff007f';
     snakeCtx.fillRect(food.x, food.y, snakeGridSize - 2, snakeGridSize - 2);
 }
 
-// دالة مساعدة لتغيير الاتجاه تدعم الموبايل والكمبيوتر معاً
 function changeDirection(newDir) {
     if (newDir === 'UP' && snakeDir !== 'DOWN') snakeDir = 'UP';
     if (newDir === 'DOWN' && snakeDir !== 'UP') snakeDir = 'DOWN';
@@ -190,23 +184,20 @@ function changeDirection(newDir) {
     if (newDir === 'RIGHT' && snakeDir !== 'LEFT') snakeDir = 'RIGHT';
 }
 
-// التحكم بالأسهم للكمبيوتر
 window.addEventListener('keydown', e => {
     if (!snakeRunning) return;
     if (e.key === 'ArrowUp') changeDirection('UP');
-    if (e.key === 'ArrowDown') changeDirection('UP'); // تصحيح لتوجيه السهم لأسفل
     if (e.key === 'ArrowDown') changeDirection('DOWN');
     if (e.key === 'ArrowLeft') changeDirection('LEFT');
     if (e.key === 'ArrowRight') changeDirection('RIGHT');
 });
 
-// تشغيل الأزرار باللمس السريع (Touch) لسرعة استجابة خرافية على الموبايل
+// اللمس السريع جداً للموبايل
 document.getElementById('btn-up').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection('UP'); });
 document.getElementById('btn-down').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection('DOWN'); });
 document.getElementById('btn-left').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection('LEFT'); });
 document.getElementById('btn-right').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection('RIGHT'); });
 
-// كود احتياطي في حال تم الضغط بالماوس (Responsive Mode)
 document.getElementById('btn-up').addEventListener('click', () => changeDirection('UP'));
 document.getElementById('btn-down').addEventListener('click', () => changeDirection('DOWN'));
 document.getElementById('btn-left').addEventListener('click', () => changeDirection('LEFT'));
@@ -238,33 +229,31 @@ function initBricksGame() {
     dx = 3;
     dy = -3;
 
-    // بناء شبكة الكتل
     for (let c = 0; c < brickColumnCount; c++) {
         bricks[c] = [];
         for (let r = 0; r < brickRowCount; r++) {
-bricks[c][r] = { x: 0, y: 0, status: 1 };
+            bricks[c][r] = { x: 0, y: 0, status: 1 };
+        }
+    }
+    bricksRunning = true;
+    bricksInterval = setInterval(updateBricksGame, 16);
 }
-}
-bricksRunning = true;
-bricksInterval = setInterval(updateBricksGame, 16);
-}
+
 function updateBricksGame() {
-if (!bricksRunning) return;
-// حركة الكرة والارتداد من الحوائط
-if (ballX + dx > bricksCanvas.width - ballRadius || ballX + dx < ballRadius) dx = -dx;
-if (ballY + dy < ballRadius) dy = -dy;
-else if (ballY + dy > bricksCanvas.height - ballRadius) {
-// الارتداد من المضرب
-if (ballX > paddleX && ballX < paddleX + paddleWidth) {
-dy = -dy;
-} else {
+    if (!bricksRunning) return;
+
+    if (ballX + dx > bricksCanvas.width - ballRadius || ballX + dx < ballRadius) dx = -dx;
+    if (ballY + dy < ballRadius) dy = -dy;
+    else if (ballY + dy > bricksCanvas.height - ballRadius) {
+        if (ballX > paddleX && ballX < paddleX + paddleWidth) {
+            dy = -dy;
+        } else {
 clearInterval(bricksInterval);
 bricksRunning = false;
-showAlert(`للأسف خسرت الكرة! 🧱 السكور: ${bricksScore}`);
+            showAlert(`للأسف خسرت الكرة! 🧱 السكور: ${bricksScore}`);
 return;
 }
 }
-// كشف اصطدام الكرة بالكتل
 for (let c = 0; c < brickColumnCount; c++) {
 for (let r = 0; r < brickRowCount; r++) {
 let b = bricks[c][r];
@@ -283,14 +272,11 @@ showAlert("عاش يا وحش! كسرت كل الكتل بنجاح 🏆");
 }
 }
 }
-// حركة المضرب يميناً ويساراً
 if (moveRight && paddleX < bricksCanvas.width - paddleWidth) paddleX += 6;
 if (moveLeft && paddleX > 0) paddleX -= 6;
 ballX += dx;
 ballY += dy;
-// مسح الكانفاس للرسم الجديد
 bricksCtx.clearRect(0, 0, bricksCanvas.width, bricksCanvas.height);
-// رسم الكتل المتبقية
 for (let c = 0; c < brickColumnCount; c++) {
 for (let r = 0; r < brickRowCount; r++) {
 if (bricks[c][r].status === 1) {
@@ -303,7 +289,6 @@ bricksCtx.fillRect(brickX, brickY, brickWidth, brickHeight);
 }
 }
 }
-// رسم المضرب والكرة
 bricksCtx.fillStyle = "#45f3ff";
 bricksCtx.fillRect(paddleX, bricksCanvas.height - paddleHeight, paddleWidth, paddleHeight);
 bricksCtx.beginPath();
@@ -311,7 +296,6 @@ bricksCtx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
 bricksCtx.fill();
 bricksCtx.closePath();
 }
-// التحكم بلوحة المفاتيح للمضرب
 window.addEventListener('keydown', e => {
 if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveRight = true;
 if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveLeft = true;
@@ -320,10 +304,10 @@ window.addEventListener('keyup', e => {
 if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveRight = false;
 if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveLeft = false;
 });
-// ميزة لمس الشاشة وسحب المضرب للموبايل
+// سحب المضرب للموبايل
 bricksCanvas.addEventListener('touchmove', e => {
 let rect = bricksCanvas.getBoundingClientRect();
-let relativeX = e.touches.clientX - rect.left;
+let relativeX = e.touches[0].clientX - rect.left;
 if (relativeX > 0 && relativeX < bricksCanvas.width) {
 paddleX = relativeX - paddleWidth / 2;
 }

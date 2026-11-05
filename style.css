@@ -158,20 +158,16 @@ nav ul li a:hover, nav ul li a.active {
 
 .modal-content {
     background-color: #1f2833;
-    padding: 30px;
+    padding: 20px;
     border-radius: 15px;
     border: 2px solid #ff007f;
     box-shadow: 0 0 25px rgba(255, 0, 127, 0.5);
     text-align: center;
-    width: 90%;
-    max-width: 400px;
-    position: relative;
-}
-
-#snake-modal .modal-content, #bricks-modal .modal-content {
-    max-width: 450px !important;
     width: 95%;
-    padding: 20px;
+    max-width: 450px;
+    max-height: 90vh; /* يمنع خروج المحتوى برة الشاشة */
+    overflow-y: auto;  /* يسمح بالاسكرول الداخلي لو الشاشة صغيرة جداً */
+    position: relative;
 }
 
 .close-btn {
@@ -181,12 +177,13 @@ nav ul li a:hover, nav ul li a.active {
     color: #c5c6c7;
     cursor: pointer;
     transition: 0.3s;
+    z-index: 10;
 }
 .close-btn:hover { color: #ff007f; }
 
 .turn-indicator {
     font-size: 18px;
-    margin: 15px 0;
+    margin: 10px 0;
 }
 
 /* لوحة XO */
@@ -195,7 +192,7 @@ nav ul li a:hover, nav ul li a.active {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     margin: 20px auto;
-    max-width: 300px;
+    max-width: 280px;
 }
 
 .cell {
@@ -221,7 +218,7 @@ nav ul li a:hover, nav ul li a.active {
 .cell.x { color: #ff007f; text-shadow: 0 0 8px #ff007f; }
 .cell.o { color: #45f3ff; text-shadow: 0 0 8px #45f3ff; }
 
-/* لوحات ألعاب الكانفاس (الثعبان وتكسير الكتل) */
+/* لوحات ألعاب الكانفاس (جعلها متجاوبة ريسبرونسيف للموبايل) */
 #snake-canvas, #bricks-canvas {
     background: #0b0c10;
     border: 2px solid #ff007f;
@@ -229,6 +226,7 @@ nav ul li a:hover, nav ul li a.active {
     margin: 15px auto;
     display: block;
     max-width: 100%;
+    height: auto; /* يجعل الكانفاس يصغر ويحافظ على أبعاده */
 }
 
 /* نافذة التنبيه الاحترافية */
@@ -304,16 +302,16 @@ nav ul li a:hover, nav ul li a.active {
 
 .horizontal-ctrls {
     display: flex;
-    gap: 50px;
+    gap: 45px;
 }
 
 .ctrl-btn {
-    width: 55px;
-    height: 55px;
+    width: 50px;
+    height: 50px;
     background-color: #1f2833;
     border: 2px solid #45f3ff;
     color: #45f3ff;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: bold;
     border-radius: 50%;
     cursor: pointer;
